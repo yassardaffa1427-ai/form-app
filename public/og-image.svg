@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f0c20" />
+      <stop offset="50%" stop-color="#1b153a" />
+      <stop offset="100%" stop-color="#2d1b54" />
+    </linearGradient>
+    <linearGradient id="card-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#573be5" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#9f5de8" stop-opacity="0.1" />
+    </linearGradient>
+    <linearGradient id="star-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffb800" />
+      <stop offset="100%" stop-color="#ff9100" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)" />
+
+  <!-- Ambient Glows -->
+  <circle cx="200" cy="150" r="300" fill="#573be5" opacity="0.25" filter="blur(60px)" />
+  <circle cx="1000" cy="500" r="350" fill="#9f5de8" opacity="0.2" filter="blur(80px)" />
+
+  <!-- Main Glassmorphism Card -->
+  <g filter="url(#shadow)">
+    <rect x="150" y="115" width="900" height="400" rx="36" fill="#ffffff" fill-opacity="0.07" stroke="#ffffff" stroke-opacity="0.15" stroke-width="2" />
+  </g>
+
+  <!-- Content Inside Card -->
+  <!-- Header Icon -->
+  <g transform="translate(210, 175)">
+    <rect width="64" height="64" rx="20" fill="url(#card-glow)" stroke="#ffffff" stroke-opacity="0.2" stroke-width="1.5" />
+    <path d="M32 18 L36.2 26.6 L45.7 28 L38.8 34.7 L40.5 44.2 L32 39.7 L23.5 44.2 L25.2 34.7 L18.3 28 L27.8 26.6 Z" fill="#ffffff" />
+  </g>
+
+  <!-- Title & Subtitle -->
+  <text x="295" y="218" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="38" font-weight="700" fill="#ffffff" letter-spacing="-0.5">
+    Workshop Feedback Form
+  </text>
+  <text x="295" y="252" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="400" fill="#a5a1b8">
+    Berikan masukan &amp; evaluasi Anda untuk meningkatkan kualitas workshop
+  </text>
+
+  <!-- Stars Display -->
+  <g transform="translate(210, 310)">
+    <rect width="780" height="84" rx="24" fill="#ffffff" fill-opacity="0.05" stroke="#ffffff" stroke-opacity="0.08" />
+    <!-- 5 Stars -->
+    <g transform="translate(30, 26)">
+      <path d="M16 2 L20.9 12 L31.8 13.6 L23.9 21.3 L25.8 32 L16 26.9 L6.2 32 L8.1 21.3 L0.2 13.6 L11.1 12 Z" fill="url(#star-grad)" />
+      <path d="M56 2 L60.9 12 L71.8 13.6 L63.9 21.3 L65.8 32 L56 26.9 L46.2 32 L48.1 21.3 L40.2 13.6 L51.1 12 Z" fill="url(#star-grad)" />
+      <path d="M96 2 L100.9 12 L111.8 13.6 L103.9 21.3 L105.8 32 L96 26.9 L86.2 32 L88.1 21.3 L80.2 13.6 L91.1 12 Z" fill="url(#star-grad)" />
+      <path d="M136 2 L140.9 12 L151.8 13.6 L143.9 21.3 L145.8 32 L136 26.9 L126.2 32 L128.1 21.3 L120.2 13.6 L131.1 12 Z" fill="url(#star-grad)" />
+      <path d="M176 2 L180.9 12 L191.8 13.6 L183.9 21.3 L185.8 32 L176 26.9 L166.2 32 L168.1 21.3 L160.2 13.6 L171.1 12 Z" fill="url(#star-grad)" />
+    </g>
+    <text x="240" y="50" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#ffffff">
+      Penilaian Cepat &amp; Mudah
+    </text>
+    <text x="520" y="50" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="500" fill="#7d7899">
+      100% Responsif &amp; Terbuka
+    </text>
+  </g>
+
+  <!-- Bottom Brand Badge -->
+  <g transform="translate(210, 435)">
+    <circle cx="12" cy="12" r="6" fill="#10b981" />
+    <text x="30" y="17" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="600" fill="#e2e0ed">
+      Formulir Evaluasi Online
+    </text>
+  </g>
+</svg>
