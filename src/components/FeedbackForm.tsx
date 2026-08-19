@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { CalendarDays, CheckCircle2, Loader2, Send, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { CalendarDays, CheckCircle2, ChevronDown, Loader2, Send, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { supabase, type FeedbackInput } from '@/lib/supabase';
 import { StarRating } from './StarRating';
 
@@ -11,6 +11,7 @@ const emptyForm: FeedbackInput = {
   attendee_name: '',
   email: '',
   workshop_date: '',
+  event_name: "Seminar AI (Markaz Al-Ma'tuq)",
   overall_rating: 0,
   content_rating: null,
   speaker_rating: null,
@@ -45,6 +46,7 @@ export function FeedbackForm({ onSubmitted }: FeedbackFormProps) {
       attendee_name: form.attendee_name?.trim() || 'Anonim',
       email: form.email?.trim() || null,
       workshop_date: form.workshop_date || null,
+      event_name: form.event_name?.trim() || "Seminar AI (Markaz Al-Ma'tuq)",
       overall_rating: form.overall_rating,
       content_rating: form.content_rating,
       speaker_rating: form.speaker_rating,
@@ -54,7 +56,15 @@ export function FeedbackForm({ onSubmitted }: FeedbackFormProps) {
       additional_comments: form.additional_comments?.trim() || null,
     };
 
-    const { error: insertError } = await supabase.from('workshop_feedback').insert(payload);
+    let { error: insertError } = await supabase.from('workshop_feedback').insert(payload);
+
+    // Fallback if event_name column is not created yet in database
+    if (insertError && (insertError.message?.includes('event_name') || insertError.code === '42703' || insertError.code === 'PGRST204')) {
+      const { event_name, ...payloadWithoutEvent } = payload;
+      const retryResult = await supabase.from('workshop_feedback').insert(payloadWithoutEvent);
+      insertError = retryResult.error;
+    }
+
     setSubmitting(false);
 
     if (insertError) {
@@ -96,6 +106,20 @@ export function FeedbackForm({ onSubmitted }: FeedbackFormProps) {
           <div className="relative">
             <input id="workshop-date" type="date" value={form.workshop_date ?? ''} onChange={(event) => update('workshop_date', event.target.value)} className={`${inputClass} h-14 rounded-full py-[17px] pl-6 pr-12`} />
             <CalendarDays className="pointer-events-none absolute right-5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[#474555]" strokeWidth={1.8} />
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="event-name" className="pl-4 font-['Hanken_Grotesk'] text-xs font-bold leading-4 tracking-[0.6px] text-[#474555]">NAMA ACARA</label>
+          <div className="relative">
+            <select
+              id="event-name"
+              value={form.event_name ?? "Seminar AI (Markaz Al-Ma'tuq)"}
+              onChange={(event) => update('event_name', event.target.value)}
+              className={`${inputClass} h-14 rounded-full py-[17px] pl-6 pr-12 appearance-none cursor-pointer`}
+            >
+              <option value="Seminar AI (Markaz Al-Ma'tuq)">Seminar AI (Markaz Al-Ma'tuq)</option>
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[#474555]" strokeWidth={1.8} />
           </div>
         </div>
       </div>

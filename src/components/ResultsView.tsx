@@ -1,9 +1,10 @@
-import { useMemo } from 'react';
-import { Star, TrendingUp, MessageSquareText, ThumbsUp } from 'lucide-react';
-import type { Feedback } from '@/lib/supabase';
+import { useState, useMemo } from 'react';
+import { Star, TrendingUp, MessageSquareText, ThumbsUp, Trash2, Loader2 } from 'lucide-react';
+import { supabase, type Feedback } from '@/lib/supabase';
 
 type ResultsViewProps = {
   feedback: Feedback[];
+  onRefresh?: () => void;
 };
 
 type RatingRow = {
@@ -44,7 +45,9 @@ function RatingBar({ label, value, count }: { label: string; value: number | nul
   );
 }
 
-export function ResultsView({ feedback }: ResultsViewProps) {
+export function ResultsView({ feedback, onRefresh }: ResultsViewProps) {
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
   const stats = useMemo(() => {
     const overall = avg(feedback.map((f) => f.overall_rating));
     const content = avg(feedback.map((f) => f.content_rating));
@@ -70,6 +73,22 @@ export function ResultsView({ feedback }: ResultsViewProps) {
       },
     };
   }, [feedback]);
+
+  const handleDelete = async (id: string) => {
+    const confirmed = window.confirm('Apakah Anda yakin ingin menghapus masukan ini? Tindakan ini tidak dapat dibatalkan.');
+    if (!confirmed) return;
+
+    setDeletingId(id);
+    const { error } = await supabase.from('workshop_feedback').delete().eq('id', id);
+    setDeletingId(null);
+
+    if (error) {
+      alert('Gagal menghapus data: ' + error.message);
+      return;
+    }
+
+    onRefresh?.();
+  };
 
   if (feedback.length === 0) {
     return (
@@ -140,23 +159,48 @@ export function ResultsView({ feedback }: ResultsViewProps) {
 
       {/* Respons terbaru */}
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
-        <h3 className="text-base font-semibold text-slate-900">Respons terbaru</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-semibold text-slate-900">Respons terbaru</h3>
+          <span className="text-xs text-slate-400">Total {feedback.length} masukan</span>
+        </div>
         <ul className="mt-4 divide-y divide-slate-100">
           {feedback.slice(0, 10).map((f) => (
             <li key={f.id} className="py-4 first:pt-0 last:pb-0">
               <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-xs font-medium text-slate-500">
-                    {new Date(f.created_at).toLocaleDateString('id-ID', {
-                      day: 'numeric',
-                      month: 'short',
-                      year: 'numeric',
-                    })}
-                  </p>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-xs font-medium text-slate-500">
+                      {new Date(f.created_at).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </p>
+                    {f.event_name && (
+                      <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-0.5 text-[11px] font-medium text-purple-700">
+                        {f.event_name}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex shrink-0 items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1">
-                  <Star size={13} className="fill-amber-400 text-amber-400" />
-                  <span className="text-xs font-semibold tabular-nums text-amber-700">{f.overall_rating}</span>
+                <div className="flex shrink-0 items-center gap-2">
+                  <div className="flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1">
+                    <Star size={13} className="fill-amber-400 text-amber-400" />
+                    <span className="text-xs font-semibold tabular-nums text-amber-700">{f.overall_rating}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(f.id)}
+                    disabled={deletingId === f.id}
+                    title="Hapus respons ini (Admin)"
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+                  >
+                    {deletingId === f.id ? (
+                      <Loader2 size={13} className="animate-spin text-red-500" />
+                    ) : (
+                      <Trash2 size={14} />
+                    )}
+                  </button>
                 </div>
               </div>
               {(f.most_valuable || f.improvements) && (

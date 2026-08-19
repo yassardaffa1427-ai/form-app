@@ -10,6 +10,7 @@ export type Feedback = {
   attendee_name: string;
   email: string | null;
   workshop_date: string | null;
+  event_name?: string | null;
   overall_rating: number;
   content_rating: number | null;
   speaker_rating: number | null;
@@ -24,6 +25,7 @@ export type FeedbackInput = {
   attendee_name: string;
   email?: string | null;
   workshop_date?: string | null;
+  event_name?: string | null;
   overall_rating: number;
   content_rating?: number | null;
   speaker_rating?: number | null;

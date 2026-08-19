@@ -40,6 +40,11 @@ export default function App() {
         { event: 'INSERT', schema: 'public', table: 'workshop_feedback' },
         (payload) => setFeedback((prev) => [payload.new as Feedback, ...prev])
       )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'workshop_feedback' },
+        (payload) => setFeedback((prev) => prev.filter((item) => item.id !== (payload.old as { id: string }).id))
+      )
       .subscribe();
 
     return () => {
@@ -106,7 +111,7 @@ export default function App() {
           {loading ? (
             <div className="rounded-[32px] bg-[#fcf8ffb2] p-12 text-center text-sm text-[#474555]">Memuat hasil...</div>
           ) : (
-            <ResultsView feedback={feedback} />
+            <ResultsView feedback={feedback} onRefresh={fetchFeedback} />
           )}
         </div>
       )}
