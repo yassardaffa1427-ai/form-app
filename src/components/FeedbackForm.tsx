@@ -11,7 +11,7 @@ const emptyForm: FeedbackInput = {
   attendee_name: '',
   email: '',
   workshop_date: '',
-  event_name: "Seminar AI (Markaz Al-Ma'tuq)",
+  event_name: '',
   overall_rating: 0,
   content_rating: null,
   speaker_rating: null,
@@ -113,11 +113,18 @@ export function FeedbackForm({ onSubmitted }: FeedbackFormProps) {
           <div className="relative">
             <select
               id="event-name"
-              value={form.event_name ?? "Seminar AI (Markaz Al-Ma'tuq)"}
+              value={form.event_name ?? ''}
               onChange={(event) => update('event_name', event.target.value)}
-              className={`${inputClass} h-14 rounded-full py-[17px] pl-6 pr-12 appearance-none cursor-pointer`}
+              className={`${inputClass} h-14 rounded-full py-[17px] pl-6 pr-12 appearance-none cursor-pointer ${
+                !form.event_name ? 'text-[#47455566]' : 'text-[#474555]'
+              }`}
             >
-              <option value="Seminar AI (Markaz Al-Ma'tuq)">Seminar AI (Markaz Al-Ma'tuq)</option>
+              <option value="" className="text-[#47455566]">
+                Pilih acara
+              </option>
+              <option value="Seminar AI (Markaz Al-Ma'tuq)" className="text-[#474555]">
+                Seminar AI (Markaz Al-Ma'tuq)
+              </option>
             </select>
             <ChevronDown className="pointer-events-none absolute right-5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[#474555]" strokeWidth={1.8} />
           </div>
