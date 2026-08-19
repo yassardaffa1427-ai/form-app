@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, BarChart3, ClipboardList } from 'lucide-react';
+import { ArrowLeft, BarChart3, ClipboardList, Lock } from 'lucide-react';
 import { supabase, type Feedback } from '@/lib/supabase';
 import { FeedbackForm } from '@/components/FeedbackForm';
 import { ResultsView } from '@/components/ResultsView';
+import { AdminLoginModal } from '@/components/AdminLoginModal';
 
 type Tab = 'form' | 'results';
 
@@ -10,6 +11,10 @@ export default function App() {
   const [tab, setTab] = useState<Tab>('form');
   const [feedback, setFeedback] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    return sessionStorage.getItem('isAdmin') === 'true';
+  });
 
   const fetchFeedback = useCallback(async () => {
     const { data, error } = await supabase
@@ -52,6 +57,29 @@ export default function App() {
     };
   }, []);
 
+  const handleTabToggle = () => {
+    if (tab === 'results') {
+      setTab('form');
+    } else {
+      if (isAdmin) {
+        setTab('results');
+      } else {
+        setIsLoginModalOpen(true);
+      }
+    }
+  };
+
+  const handleLoginSuccess = () => {
+    setIsAdmin(true);
+    setTab('results');
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('isAdmin');
+    setIsAdmin(false);
+    setTab('form');
+  };
+
   const count = feedback.length;
   const averageRating = useMemo(() => {
     if (count === 0) return null;
@@ -73,14 +101,22 @@ export default function App() {
             </button>
             <h1 className="font-['Hanken_Grotesk'] text-2xl font-semibold leading-8">Feedback Form</h1>
           </div>
-          <button
-            type="button"
-            onClick={() => setTab(tab === 'form' ? 'results' : 'form')}
-            aria-label={tab === 'form' ? 'Lihat hasil' : 'Kembali ke formulir'}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-[#474555] transition hover:bg-[#f1ecfa]"
-          >
-            {tab === 'form' ? <BarChart3 size={19} /> : <ClipboardList size={19} />}
-          </button>
+          <div className="flex items-center gap-2">
+            {isAdmin && tab === 'results' && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                <Lock size={12} /> Admin
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={handleTabToggle}
+              aria-label={tab === 'form' ? 'Lihat data responden (Admin)' : 'Kembali ke formulir'}
+              title={tab === 'form' ? 'Akses Data Responden (Hanya Admin)' : 'Kembali ke formulir'}
+              className="flex h-10 w-10 items-center justify-center rounded-full text-[#474555] transition hover:bg-[#f1ecfa]"
+            >
+              {tab === 'form' ? <BarChart3 size={19} /> : <ClipboardList size={19} />}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -111,10 +147,16 @@ export default function App() {
           {loading ? (
             <div className="rounded-[32px] bg-[#fcf8ffb2] p-12 text-center text-sm text-[#474555]">Memuat hasil...</div>
           ) : (
-            <ResultsView feedback={feedback} onRefresh={fetchFeedback} />
+            <ResultsView feedback={feedback} onRefresh={fetchFeedback} onLogout={handleLogout} />
           )}
         </div>
       )}
+
+      <AdminLoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onSuccess={handleLoginSuccess}
+      />
     </main>
   );
 }

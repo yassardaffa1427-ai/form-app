@@ -5,6 +5,7 @@ import { supabase, type Feedback } from '@/lib/supabase';
 type ResultsViewProps = {
   feedback: Feedback[];
   onRefresh?: () => void;
+  onLogout?: () => void;
 };
 
 type RatingRow = {
@@ -160,8 +161,19 @@ export function ResultsView({ feedback, onRefresh }: ResultsViewProps) {
       {/* Respons terbaru */}
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
         <div className="flex items-center justify-between">
-          <h3 className="text-base font-semibold text-slate-900">Respons terbaru</h3>
-          <span className="text-xs text-slate-400">Total {feedback.length} masukan</span>
+          <div>
+            <h3 className="text-base font-semibold text-slate-900">Respons terbaru</h3>
+            <p className="text-xs text-slate-400">Total {feedback.length} masukan responden</p>
+          </div>
+          {onLogout && (
+            <button
+              type="button"
+              onClick={onLogout}
+              className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-red-50 hover:text-red-600"
+            >
+              Keluar Admin
+            </button>
+          )}
         </div>
         <ul className="mt-4 divide-y divide-slate-100">
           {feedback.slice(0, 10).map((f) => (
@@ -169,6 +181,10 @@ export function ResultsView({ feedback, onRefresh }: ResultsViewProps) {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
+                    <p className="truncate text-sm font-bold text-slate-900">
+                      {f.attendee_name || 'Anonim'}
+                    </p>
+                    <span className="text-xs text-slate-300">•</span>
                     <p className="text-xs font-medium text-slate-500">
                       {new Date(f.created_at).toLocaleDateString('id-ID', {
                         day: 'numeric',
