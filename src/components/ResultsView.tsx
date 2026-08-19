@@ -146,11 +146,10 @@ export function ResultsView({ feedback }: ResultsViewProps) {
             <li key={f.id} className="py-4 first:pt-0 last:pb-0">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-slate-900">{f.attendee_name}</p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs font-medium text-slate-500">
                     {new Date(f.created_at).toLocaleDateString('id-ID', {
-                      month: 'short',
                       day: 'numeric',
+                      month: 'short',
                       year: 'numeric',
                     })}
                   </p>
